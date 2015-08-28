@@ -2,10 +2,10 @@ var flairs = document.getElementsByTagName("span");
 var count = 0;
 
 $('.flair').each(function(i, flair) {
-	console.log("flair "+i);
+	//console.log("flair "+i);
 	if(/.+heatware\.com.+/.test($(flair).html())){
 		var heatwareURL = $(flair).html().replace("http://", "https://");
-		console.log(heatwareURL);
+		//console.log(heatwareURL);
 
 		$.ajax({
 			url:heatwareURL,

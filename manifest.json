@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "HWSwapWare",
-	"version": "1.1",
+	"version": "1.2",
 	"description": "Replaces heatware URLs with heatware feedback stats on /r/hardwareswap.",
 	"content_scripts": 
 	[
