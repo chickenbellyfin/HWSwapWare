@@ -1,40 +1,33 @@
 var flairs = document.getElementsByTagName("span");
 var count = 0;
 
-var profiles = {};
+$('.flair').each(function(i, flair) {
+	console.log("flair "+i);
+	if(/.+heatware\.com.+/.test($(flair).html())){
+		var heatwareURL = $(flair).html().replace("http://", "https://");
+		console.log(heatwareURL);
 
-for(var i = 0; i < flairs.length; i++){
-	if(flairs[i].className.indexOf("flair") == 0 && /.+heatware\.com.+/.test(flairs[i].innerHTML)){
-		
-		var heatwareURL = flairs[i].innerHTML;
-		if(!profiles[heatwareURL]){
-			var heatware = httpGet(heatwareURL);
-			profiles[heatwareURL] = {};
-			profiles[heatwareURL].pos = getNum("Positive Evals", heatware);
-			profiles[heatwareURL].neu = getNum("Neutral Evals", heatware);
-			profiles[heatwareURL].neg = getNum("Negative Evals", heatware);
-		} 
-		
-		var hwstr = "Heatware: "+profiles[heatwareURL].pos+" / "+profiles[heatwareURL].neu+" / "+profiles[heatwareURL].neg;
-		flairs[i].innerHTML = "<a style='font-size:100% !important;font-weight:normal !important;' href='"+heatwareURL+"'>"+hwstr+"</a>";
-		
-		count++;
-	}
-	
-}
+		$.ajax({
+			url:heatwareURL,
+			success:function(data){
 
+				var parser=new DOMParser();
+  				heatware = parser.parseFromString(data,"text/html");
 
-function httpGet(url)
-{
-    var xmlHttp = null;
+				profile = {};
+				profile.url = heatwareURL;
+				profile.pos = getNum("Positive Evals", heatware);
+				profile.neu = getNum("Neutral Evals", heatware);
+				profile.neg = getNum("Negative Evals", heatware);
+				replaceFlair(flair, profile);		
+			}
+		});
+	}	
+});
 
-    xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", url, false );
-    xmlHttp.send( null );
-    
-    var parser=new DOMParser();
-  	xmlDoc = parser.parseFromString(xmlHttp.responseText,"text/html");
-	return xmlDoc;
+function replaceFlair(flair, profile){
+	var hwstr = "Heatware: "+profile.pos+" / "+profile.neu+" / "+profile.neg;
+	$(flair).html("<a style='font-size:100% !important;font-weight:normal !important;' href='"+profile.url+"'>"+hwstr+"</a>");
 }
 
 
@@ -45,8 +38,7 @@ function getNum(name, hw){
 			var num = nums[i].getElementsByClassName("num2")[0].innerHTML;
 			return num;
 		}
-	}
-	
+	}	
 	return 0;
 }
 
